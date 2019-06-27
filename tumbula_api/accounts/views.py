@@ -44,8 +44,12 @@ class LoginView(APIView):
                     jwt_payload_handler(user)
                 )})
             token_serializer.is_valid()
-            data_dict = {"status":200, "data": {"token":token_serializer.data}}
-            return Response(data_dict, status=status.HTTP_200_OK)
+            if user.is_administrator == True:
+                data_dict = {"status":200, "data": {"token":token_serializer.data, "role":"admin"}}
+                return Response(data_dict, status=status.HTTP_200_OK)
+            elif user.is_store_owner == True:
+                data_dict = {"status":200, "data": {"token":token_serializer.data, "role":"store_owner"}}
+                return Response(data_dict, status=status.HTTP_200_OK)
         return Response({"status":404, "error":"username or password incorrect"}, status=status.HTTP_404_NOT_FOUND)
 
     def get(self, request):
